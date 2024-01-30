@@ -3,10 +3,55 @@ package handler
 import (
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/aom31/fibergoapi/models"
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v4"
 )
+
+func Login(c *fiber.Ctx) error {
+	//1. check user logic is valid
+
+	//instance user from struct User
+	user := new(models.User)
+
+	// parse body request to user
+	if err := c.BodyParser(user); err != nil {
+		return c.Status(fiber.StatusBadRequest).SendString(err.Error())
+	}
+
+	if user.Email != models.MockDataUserLogic.Email || user.Password != models.MockDataUserLogic.Password {
+		return fiber.ErrUnauthorized
+	}
+
+	token, _ := createTokenPattern(c, user)
+
+	return c.JSON(fiber.Map{
+		"message": "login success",
+		"token":   token,
+	})
+}
+
+func createTokenPattern(c *fiber.Ctx, user *models.User) (string, error) {
+	// Create token
+	token := jwt.New(jwt.SigningMethodHS256)
+
+	// Set claims
+	claims := token.Claims.(jwt.MapClaims)
+	claims["email"] = user.Email
+	claims["role"] = "admin"
+	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
+
+	// Generate encoded token and send it as response.
+	t, err := token.SignedString([]byte(os.Getenv("JWT_secret")))
+	if err != nil {
+		return "", c.SendStatus(fiber.StatusInternalServerError)
+	}
+
+	return t, nil
+
+}
 
 func GetBooks(c *fiber.Ctx) error {
 	return c.JSON(models.InitDataBook())

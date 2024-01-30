@@ -1,5 +1,15 @@
 package models
 
+type User struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+var MockDataUserLogic = User{
+	Email:    "test@mail.com",
+	Password: "test1234",
+}
+
 type Book struct {
 	ID     int    `json:"id"`
 	Title  string `json:"title"`

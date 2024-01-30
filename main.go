@@ -2,10 +2,12 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/aom31/fibergoapi/handler"
 	"github.com/aom31/fibergoapi/middleware"
 	"github.com/gofiber/fiber/v2"
+	jwtware "github.com/gofiber/jwt/v2"
 	"github.com/joho/godotenv"
 )
 
@@ -19,8 +21,15 @@ func main() {
 		log.Fatal(err.Error())
 	}
 
-	//use middleware
-	appServer.Use(middleware.CheckMiddlewareLogURL)
+	appServer.Post("/login", handler.Login)
+
+	// JWT Middleware
+	appServer.Use(jwtware.New(jwtware.Config{
+		SigningKey: []byte(os.Getenv("JWT_secret")),
+	}))
+
+	//use middleware: if role admin can use API below
+	appServer.Use(middleware.ValidateRoleAuthorize)
 
 	// use route http
 	appServer.Get("/books", handler.GetBooks)
