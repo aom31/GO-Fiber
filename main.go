@@ -13,6 +13,10 @@ func main() {
 	// use route http
 	appServer.Get("/books", handler.GetBooks)
 	appServer.Get("/book/:id", handler.GetBookByID)
+	appServer.Post("/book", handler.CreateBook)
+	appServer.Put("/book", handler.UpdateBookByID)
+	appServer.Delete("/book/:id", handler.DeleteBookByID)
+	appServer.Post("/uploadfile", handler.UploadFile)
 
 	// start server with port
 	appServer.Listen(":8080")
