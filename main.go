@@ -31,12 +31,17 @@ func main() {
 	//use middleware: if role admin can use API below
 	appServer.Use(middleware.ValidateRoleAuthorize)
 
+	// apply middleware แค่บาง route api ที่ต้องการ ด้วย group
+	bookGroup := appServer.Group("/book")
+	bookGroup.Use(middleware.ValidateRoleAuthorize)
+
 	// use route http
-	appServer.Get("/books", handler.GetBooks)
-	appServer.Get("/book/:id", handler.GetBookByID)
-	appServer.Post("/book", handler.CreateBook)
-	appServer.Put("/book", handler.UpdateBookByID)
-	appServer.Delete("/book/:id", handler.DeleteBookByID)
+	bookGroup.Get("/books", handler.GetBooks)
+	bookGroup.Get("/book/:id", handler.GetBookByID)
+	bookGroup.Post("/book", handler.CreateBook)
+	bookGroup.Put("/book", handler.UpdateBookByID)
+	bookGroup.Delete("/book/:id", handler.DeleteBookByID)
+
 	appServer.Post("/uploadfile", handler.UploadFile)
 
 	appServer.Get("/config", handler.GetEnv)
