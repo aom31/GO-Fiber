@@ -2,7 +2,10 @@ module github.com/aom31/fibergoapi
 
 go 1.20
 
-require github.com/gofiber/fiber/v2 v2.52.0
+require (
+	github.com/gofiber/fiber/v2 v2.52.0
+	github.com/joho/godotenv v1.5.1
+)
 
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect

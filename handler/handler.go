@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"os"
 	"strconv"
 
 	"github.com/aom31/fibergoapi/models"
@@ -92,4 +93,11 @@ func UploadFile(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).SendString(err.Error())
 	}
 	return c.SendString("file upload complete")
+}
+
+func GetEnv(c *fiber.Ctx) error {
+
+	return c.JSON(fiber.Map{
+		"DBNAME": os.Getenv("DBNAME"),
+	})
 }
